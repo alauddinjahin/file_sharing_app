@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb" // or any other provider you use
+  url      = env("DATABASE_URL")
+}
+
+// Combined Models
+
+// Imported from file.prisma
+model File {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @db.ObjectId
+  user      User      @relation(fields: [userId], references: [id]) 
+  filename  String
+  fileType  String    // 'image' or 'video'
+  filePath  String
+  tags      FileTag[] 
+  shares    FileShare[] 
+  views     Int       @default(0) // Number of times viewed
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Tag {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  files     FileTag[]  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FileTag {
+  id        String   @id @default(cuid()) @map("_id")
+  fileId    String   @db.ObjectId
+  tagId     String   @db.ObjectId
+  file      File     @relation(fields: [fileId], references: [id])
+  tag       Tag      @relation(fields: [tagId], references: [id])
+
+  @@unique([fileId, tagId])
+}
+
+model FileShare {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  fileId    String   @db.ObjectId
+  file      File     @relation(fields: [fileId], references: [id])
+  shareLink String   @unique
+  createdAt DateTime @default(now())
+}
+
+// Imported from user.prisma
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  name      String?
+  files     File[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
