@@ -27,11 +27,6 @@ router.route('/login').post(
     authController.login
 );
 
-router.route('/logout').post( 
-    sanitize(), 
-    authController.logout
-);
-
 
 // Defining private routes
 router.use('/auth', authMiddleware, authRouter);

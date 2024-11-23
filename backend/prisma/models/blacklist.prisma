@@ -1,0 +1,5 @@
+model Blacklist {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  jti       String   @unique // Store the unique JWT identifier (jti)
+  createdAt DateTime @default(now())
+}

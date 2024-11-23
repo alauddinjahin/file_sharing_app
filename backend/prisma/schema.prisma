@@ -9,6 +9,13 @@ datasource db {
 
 // Combined Models
 
+// Imported from blacklist.prisma
+model Blacklist {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  jti       String   @unique // Store the unique JWT identifier (jti)
+  createdAt DateTime @default(now())
+}
+
 // Imported from file.prisma
 model File {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
@@ -56,6 +63,8 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  refreshToken String?
+  isOnline  Boolean  @default(false)
   files     File[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

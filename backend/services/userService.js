@@ -17,17 +17,17 @@ class UserService {
             email: true,
             name: true,
             files: true,
-            // isOnline: true,
+            isOnline: true,
             createdAt: true,
             updatedAt: true,
         };
     }
 
-    async getUserById(identifier) {
+    async getUserById(identifier, extras={}) {
         const where = { id: identifier };
         return this.#getTable().findUnique({
             where,
-            select: this.#getSelect(),
+            select: { ...this.#getSelect(), ...extras },
         });
     }
 
@@ -116,10 +116,6 @@ class UserService {
             select: this.#getSelect(),
         });
     }
-
-
-
-
 
 
 }

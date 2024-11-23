@@ -3,6 +3,8 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  refreshToken String?
+  isOnline  Boolean  @default(false)
   files     File[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

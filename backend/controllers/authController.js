@@ -1,6 +1,7 @@
-const { secure, auth_identifier } = require('../config/app');
+const { secure, auth_identifier, jwtExpiration, jwtRefreshExpiration } = require('../config/app');
 const authService = require('../services/authService');
 const storageManager = require('../utils/authStore');
+const { parseExpiration } = require('../utils/jwtUtils');
 const HttpStatus = require('../utils/statusCodes');
 
 class AuthController {
@@ -26,7 +27,7 @@ class AuthController {
         httpOnly: true,
         secure: secure, 
         sameSite: 'Strict', // Use 'None' for cross-origin requests
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        maxAge: parseExpiration(jwtRefreshExpiration), // 1 day
       });
 
       res.status(HttpStatus.OK).json({ user, fs_token: token });
@@ -38,6 +39,13 @@ class AuthController {
 
   logout(req, res){
   
+    const { auth_user } = req;
+    if(!auth_user){
+      return res.status(HttpStatus.FORBIDDEN).json({ message: 'You are already logged out' });
+    }
+    
+    authService.removeRefreshTokenToMakeUserInvalid(auth_user?.id);
+
     res.clearCookie('fs_token', {
       httpOnly: true,   
       secure: secure, 
@@ -51,6 +59,22 @@ class AuthController {
   
     return res.status(HttpStatus.OK).json({ message: 'Successfully logged out' });
   };
+
+  // re-generate access token
+  async refreshToken(req, res) {
+
+    const { refreshToken } = req._payload;
+
+    try {
+      const user = await authService.reGenerateAccessTokenwithPreviousRefreshToken(refreshToken);
+      res.json(user);
+    } catch (err) {
+      res.status(401).json({ message: err.message });
+    }
+
+  }
+
+
 }
 
 module.exports = new AuthController();
