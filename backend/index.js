@@ -3,9 +3,9 @@ const config = require('./config');
 const appManager = require("./app");
 require("./errors");
 const path = require("path");
-const prisma = require('./services/prismaService'); 
 const { router } = require('./routes');
 const errorHandler = require('./errors/handlers');
+const prismaService = require('./services/prismaService');
 
 // set up root path 
 global.appRoot = path.resolve(__dirname);
@@ -33,7 +33,7 @@ app.use(errorHandler);
 // Start the database connection and server
 app.listen(port, async () => {
     try {
-      await prisma.$connect();  
+      await prismaService.getClient().$connect();  
       console.log('Database connected successfully');
       console.log(`Server is running at http://localhost:${port}`);
     } catch (err) {
