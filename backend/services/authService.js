@@ -129,8 +129,7 @@ class AuthService {
       }
   
       // Generate a new access token
-      const newAccessToken = this.#createAccessToken(userId);
-  
+      const newAccessToken = this.#createAccessToken(userId);  
       // Optionally rotate the refresh token
       const newRefreshToken = this.#createRefreshToken(userId);
 

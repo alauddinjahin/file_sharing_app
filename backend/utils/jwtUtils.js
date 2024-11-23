@@ -1,3 +1,5 @@
+const { secure, jwtRefreshExpiration } = require("../config/app");
+
 const parseExpiration = (expiration) => {
     if (!expiration) return null;
   
@@ -18,9 +20,22 @@ const parseExpiration = (expiration) => {
     }
   };
 
+  const setCookieFromResponse=(res, token, )=>{
+        res.cookie('fs_token', token, {
+        httpOnly: true,
+        secure: secure, 
+        sameSite: 'Strict', // Use 'None' for cross-origin requests
+        maxAge: parseExpiration(jwtRefreshExpiration), // 1 day
+    });
+
+  }
+
+
+
 
   module.exports = {
-    parseExpiration
+    parseExpiration,
+    setCookieFromResponse
   }
 
   

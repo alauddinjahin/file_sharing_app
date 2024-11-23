@@ -1,7 +1,7 @@
 const { secure, auth_identifier, jwtExpiration, jwtRefreshExpiration } = require('../config/app');
 const authService = require('../services/authService');
 const storageManager = require('../utils/authStore');
-const { parseExpiration } = require('../utils/jwtUtils');
+const { parseExpiration, setCookieFromResponse } = require('../utils/jwtUtils');
 const HttpStatus = require('../utils/statusCodes');
 
 class AuthController {
@@ -23,13 +23,7 @@ class AuthController {
       const { email, password } = req._payload;
       const { user, token } = await authService.login(email, password);
 
-      res.cookie('fs_token', token, {
-        httpOnly: true,
-        secure: secure, 
-        sameSite: 'Strict', // Use 'None' for cross-origin requests
-        maxAge: parseExpiration(jwtRefreshExpiration), // 1 day
-      });
-
+      setCookieFromResponse(res, token);
       res.status(HttpStatus.OK).json({ user, fs_token: token });
 
     } catch (error) {
