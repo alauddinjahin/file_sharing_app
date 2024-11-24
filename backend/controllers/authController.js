@@ -1,7 +1,7 @@
 const { secure, auth_identifier, jwtExpiration, jwtRefreshExpiration } = require('../config/app');
 const authService = require('../services/authService');
 const storageManager = require('../utils/authStore');
-const { parseExpiration, setCookieFromResponse } = require('../utils/jwtUtils');
+const { setCookieFromResponse, removeCookie } = require('../utils/jwtUtils');
 const HttpStatus = require('../utils/statusCodes');
 
 class AuthController {
@@ -35,17 +35,12 @@ class AuthController {
   
     const { auth_user } = req;
     if(!auth_user){
-      return res.status(HttpStatus.FORBIDDEN).json({ message: 'You are already logged out' });
+      return res.status(HttpStatus.FORBIDDEN).json({ message: 'You have already been logged out.' });
     }
     
     authService.removeRefreshTokenToMakeUserInvalid(auth_user?.id);
 
-    res.clearCookie('fs_token', {
-      httpOnly: true,   
-      secure: secure, 
-      sameSite: 'Strict', 
-      path: '/'  
-    });
+    removeCookie(res)
   
     storageManager.run(() => {
       storageManager.set(auth_identifier, null);
@@ -63,9 +58,30 @@ class AuthController {
       const user = await authService.reGenerateAccessTokenwithPreviousRefreshToken(refreshToken);
       res.json(user);
     } catch (err) {
-      res.status(401).json({ message: err.message });
+      res.status(HttpStatus.UNAUTHORIZED).json({ message: err.message });
     }
 
+  }
+
+  async forgotPassword(req, res) {
+    try {
+      const { email } = req._payload;
+      const response = await authService.forgotPassword(email);
+      res.status(HttpStatus.OK).json(response);
+    } catch (err) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
+    }
+  }
+
+
+  async resetPassword(req, res) {
+    try {
+      const { token, email, newPassword } = req._payload;
+      const response = await authService.resetPassword(token, email, newPassword);
+      res.status(HttpStatus.OK).json(response);
+    } catch (err) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: err.message });
+    }
   }
 
 

@@ -37,6 +37,16 @@ const schemas = {
         email: Joi.string().email().required(),
         password: Joi.string().required().min(8).max(30),
     }),
+    forgotPassword: Joi.object({
+        email: Joi.string().email().required(),
+    }),
+    resetPassword: Joi.object({
+        token: Joi.string().required(),
+        email: Joi.string().email().required(),
+        newPassword: Joi.string().required().min(8).max(30).pattern(new RegExp(`(?=.*[!@#$%^&*(),.?":{}|<>])`)).messages({
+            "string.pattern.base": `Password should contain at least one special character`,
+        }),
+    }),
     file: fileSchema,
     files: Joi.array().items(fileSchema).min(1).required(),
 };

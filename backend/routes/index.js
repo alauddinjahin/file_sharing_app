@@ -27,6 +27,18 @@ router.route('/login').post(
     authController.login
 );
 
+router.route('/forgotPassword').post( 
+    sanitize(), 
+    validateRequest("forgotPassword"), 
+    authController.forgotPassword
+);
+
+router.route('/resetPassword').post( 
+    sanitize(), 
+    validateRequest("resetPassword"), 
+    authController.resetPassword
+);
+
 
 // Defining private routes
 router.use('/auth', authMiddleware, authRouter);

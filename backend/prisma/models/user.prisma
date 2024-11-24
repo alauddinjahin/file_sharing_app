@@ -3,6 +3,8 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  resetPasswordToken   String?   
+  resetPasswordExpires DateTime?
   refreshToken String?
   isOnline  Boolean  @default(false)
   files     File[]

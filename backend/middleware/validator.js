@@ -1,4 +1,5 @@
 const schemas = require('../schemas');
+const HttpStatus = require('../utils/statusCodes');
 
 const validateRequest = (schemaKey) => {
 
@@ -14,7 +15,9 @@ const validateRequest = (schemaKey) => {
     return (req, res, next) => {
         const { value , error} = schema[func](req._payload);
         if (error) {
-            return res.status(400).json(error.details[0]?.message ?? "Something wents wrong!");
+            return res.status(HttpStatus.BAD_REQUEST).json({
+                error: error.details[0]?.message ?? "Something wents wrong!"
+            });
         }
 
         if (!req.value) {

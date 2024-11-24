@@ -30,12 +30,22 @@ const parseExpiration = (expiration) => {
 
   }
 
+  const removeCookie =(res)=>{
+    res.clearCookie('fs_token', {
+        httpOnly: true,   
+        secure: secure, 
+        sameSite: 'Strict', 
+        path: '/'  
+    });
+  }
+
 
 
 
   module.exports = {
     parseExpiration,
-    setCookieFromResponse
+    setCookieFromResponse,
+    removeCookie
   }
 
   

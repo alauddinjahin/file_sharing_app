@@ -1,8 +1,25 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const bcrypt = require('bcrypt');
+const { salt } = require('../config/app');
 
 class TokenService {
   constructor(secret) {
     this.secret = secret;
+  }
+
+  async generatePasswordResetToken(){
+    try {
+      // 2. Generate a secure reset token
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const hashedResetToken = await bcrypt.hash(resetToken, salt);
+      const tokenExpiry = Date.now() + 3600000; // 1 hour from now
+
+      return { resetToken, hashedResetToken, tokenExpiry }
+
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   /**

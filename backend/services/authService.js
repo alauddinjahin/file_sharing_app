@@ -3,7 +3,9 @@ const jwt = require('jsonwebtoken');
 const HttpStatus = require('../utils/statusCodes');
 const userService = require('./userService');
 const prismaService = require('./prismaService');
+const tokenService = require('./tokenService');
 const config = require('./../config').app;
+const EmailService = require('./emailService');
 
 class AuthService {
 
@@ -146,7 +148,64 @@ class AuthService {
 
 
 
-  async forgotPassword() { }
+  async forgotPassword(email) {
+
+    const user = await userService.getUserByEmail(email);
+    if (!user) {
+      throw new RequestError('No account found with this email.');
+    }
+
+    // Save the hashed token and expiry to the user's record in the database
+    const { hashedResetToken, tokenExpiry, resetToken }= await tokenService.generatePasswordResetToken();
+    await userService.updateUserById(user.id, {
+      resetPasswordToken: hashedResetToken,
+      resetPasswordExpires: new Date(tokenExpiry),
+    });
+
+    // Send email with reset link
+    const resetUrl = `${config.clientUrl}/reset-password?token=${resetToken}&email=${email}`;
+    const emailService = new EmailService('smtp');
+    await emailService.sendEmail({
+      to: email,
+      subject: 'Password Reset Request',
+      text: `You requested a password reset. Click the link to reset your password: ${resetUrl}`,
+    });
+
+    return { message: 'Password reset instructions have been sent to your email.' };
+  }
+
+
+  async resetPassword(token, email, newPassword) {
+  
+    console.log({
+      token, email, newPassword
+    }, 'token, email, newPassword')
+
+    const user = await userService.getUserByEmail(email, {
+      resetPasswordToken: true,
+      resetPasswordExpires: true,
+    });
+
+    console.log(user, 'emafdsfsd user')
+
+    if (!user || !user?.resetPasswordToken || user?.resetPasswordExpires < Date.now()) {
+      throw new RequestError('Invalid or expired reset token.');
+    }
+
+    const isTokenValid = await this.#hashCompare(token, user.resetPasswordToken);
+    if (!isTokenValid) {
+      throw new RequestError('Invalid reset token.');
+    }
+
+    // Hash the new password and update the user's record
+    await userService.updateUserById(user.id, {
+      password: newPassword,
+      resetPasswordToken: null, // Clear the reset token
+      resetPasswordExpires: null, // Clear the expiry
+    });
+
+    return { message: 'Password successfully updated.' };
+  }
 
 }
 
