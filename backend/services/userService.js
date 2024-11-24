@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const HttpStatus = require('../utils/statusCodes');
 const prismaService = require('./prismaService');
-const { salt } = require('../config/app');
+const { salt } = require('../config').app;
 
 class UserService {
 

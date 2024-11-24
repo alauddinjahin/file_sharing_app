@@ -1,8 +1,13 @@
 const Joi = require('joi');
-const { allowedMimeTypes, maxFileSize } = require('../config/file');
+const { allowedMimeTypes, maxFileSize } = require('../config').file;
 
 const fileSchema = Joi.object({
+    fieldname: Joi.string().required(),
     originalname: Joi.string().required(),
+    encoding: Joi.string().required(),
+    destination: Joi.string().required(),
+    filename: Joi.string().required(),
+    path: Joi.string().required(),
     mimetype: Joi.string()
         .valid(...allowedMimeTypes)
         .required()
@@ -47,8 +52,14 @@ const schemas = {
             "string.pattern.base": `Password should contain at least one special character`,
         }),
     }),
-    file: fileSchema,
-    files: Joi.array().items(fileSchema).min(1).required(),
+    upload:Joi.object({
+        tags: Joi.array().items(Joi.string()).optional(),
+        file: fileSchema,
+    }),
+    uploads:Joi.object({
+        files: Joi.array().items(fileSchema).min(1).required(),
+        tags: Joi.array().items(Joi.string()).optional()
+    }),
 };
 
 

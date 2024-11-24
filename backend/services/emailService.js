@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const emailConfig = require('../config');
+const emailConfig = require('../config').mail;
 const fs = require('fs');
 const path = require('path');
 
@@ -16,7 +16,7 @@ class EmailService {
    * @returns {Object} - Nodemailer transporter.
    */
   #createTransporter(provider) {
-    this._mailConfig = emailConfig?.mail;
+    this._mailConfig = emailConfig;
     const currentProvider = this._mailConfig[provider];
     console.log('Mail config--->', {[provider]: currentProvider})
     if (!currentProvider) {

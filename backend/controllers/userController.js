@@ -11,7 +11,7 @@ class UsersController {
       const users = await userService.getUsers();
       res.status(HttpStatus.OK).json(users);
     } catch (error) {
-      res.status(HttpStatus.NOT_FOUND).json({ error: error.message });
+      res.status(HttpStatus.NOT_FOUND).json({ message: error.message });
     }
   }
 

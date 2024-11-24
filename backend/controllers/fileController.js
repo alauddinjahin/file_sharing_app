@@ -5,15 +5,26 @@ class FileController {
 
   async uploadFile(req, res) {
     try {
-      const { file=null, files = [] } = req._payload;
-
-    //   userId, file, tags
-      console.log(req._payload, 'req._payload')
-      return ;
-      const user = await fileService.uploadFile(email, password, name, files);
-      res.status(HttpStatus.CREATED).json(user);
+      const { file, tags } = req._payload;
+      const {id:userId} = req?.auth_user;
+      const fileData = await fileService.uploadFile({userId, file, tags});
+      res.status(HttpStatus.CREATED).json(fileData);
     } catch (error) {
-      res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
+    }
+  }
+
+
+  async uploadMultiFile(req, res) {
+    try {
+
+      const { files, tags } = req._payload;
+      const {id:userId} = req?.auth_user;
+
+      const fileData = await fileService.uploadMultiFile({userId, files, tags});
+      res.status(HttpStatus.CREATED).json(fileData);
+    } catch (error) {
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
     }
   }
 

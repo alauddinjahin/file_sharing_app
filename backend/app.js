@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const expressSanitizer = require('express-sanitizer');
 const cors = require('cors');
+const path = require('path');
 
 
 module.exports = {
@@ -26,7 +27,8 @@ module.exports = {
         app.use(cookieParser(config.app.secret));
 
         // app.use(session({ secret: config.app.secret ,resave: true, saveUninitialized:true}));
-        // app.use("/photo", express.static(path.join(__dirname, 'public/images')));
+        app.use("/images", express.static(path.join(__dirname, 'public/images'))); // get images though the URL
+
 
         app.use(expressSanitizer());
         app.use(helmet());

@@ -4,9 +4,16 @@ const { format } = require('date-fns');
 class PrismaService {
 
   constructor() {
-    this._prisma = new PrismaClient();
+    this._prisma = new PrismaClient({
+      // log: ['query'], 
+    });
     this.#setupMiddleware();
     this.#setupShutdownHooks();
+
+    this._prisma.$on('query', (e) => {
+      console.log('Query:', e.query);
+      console.log('Duration:', e.duration, 'ms');
+    });
   }
 
   #setupMiddleware() {

@@ -20,7 +20,7 @@ const parseExpiration = (expiration) => {
     }
   };
 
-  const setCookieFromResponse=(res, token, )=>{
+  const setCookie=(res, token, )=>{
         res.cookie('fs_token', token, {
         httpOnly: true,
         secure: secure, 
@@ -44,7 +44,7 @@ const parseExpiration = (expiration) => {
 
   module.exports = {
     parseExpiration,
-    setCookieFromResponse,
+    setCookie,
     removeCookie
   }
 

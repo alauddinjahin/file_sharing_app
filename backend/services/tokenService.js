@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
-const { salt } = require('../config/app');
+const { salt } = require('../config').app;
 
 class TokenService {
   constructor(secret) {

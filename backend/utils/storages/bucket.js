@@ -1,7 +1,7 @@
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
-const { maxFileSize, allowedMimeTypes, pathToUpload } = require('../../config/file');
+const { maxFileSize, allowedMimeTypes, pathToUpload } = require('../../config').file;
 
 // File type filter function
 const fileFilter = (req, file, cb) => {

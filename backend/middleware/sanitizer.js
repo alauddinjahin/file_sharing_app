@@ -18,7 +18,9 @@ var sanitize = function (ignore = []) {
          req._payload = {
             ...req.body,    // Add body data
             ...req.params,  // Add params data
-            ...req.query    // Add query data
+            ...req.query,    // Add query data
+            ...(req?.file ? { file: req.file } : {}),
+            ...(req?.files ? { files: req.files } : {}),
         };
 
         // Continue to the next middleware

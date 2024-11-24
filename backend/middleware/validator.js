@@ -13,10 +13,12 @@ const validateRequest = (schemaKey) => {
 
     const schema = schemas[key] || {};
     return (req, res, next) => {
+        // console.log(schema[func], schema, 'schema[func]')
+        console.log(req._payload, 'joi')
         const { value , error} = schema[func](req._payload);
         if (error) {
             return res.status(HttpStatus.BAD_REQUEST).json({
-                error: error.details[0]?.message ?? "Something wents wrong!"
+                message: error.details[0]?.message ?? "Something wents wrong!"
             });
         }
 

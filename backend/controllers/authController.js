@@ -1,7 +1,7 @@
-const { secure, auth_identifier, jwtExpiration, jwtRefreshExpiration } = require('../config/app');
+const { auth_identifier } = require('../config/app');
 const authService = require('../services/authService');
 const storageManager = require('../utils/authStore');
-const { setCookieFromResponse, removeCookie } = require('../utils/jwtUtils');
+const { removeCookie, setCookie } = require('../utils/jwtUtils');
 const HttpStatus = require('../utils/statusCodes');
 
 class AuthController {
@@ -12,7 +12,7 @@ class AuthController {
       const user = await authService.register(email, password, name, files);
       res.status(HttpStatus.CREATED).json(user);
     } catch (error) {
-      res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+      res.status(HttpStatus.BAD_REQUEST).json({ message: error.message });
     }
   }
 
@@ -23,11 +23,11 @@ class AuthController {
       const { email, password } = req._payload;
       const { user, token } = await authService.login(email, password);
 
-      setCookieFromResponse(res, token);
+      setCookie(res, token);
       res.status(HttpStatus.OK).json({ user, fs_token: token });
 
     } catch (error) {
-      res.status(HttpStatus.UNAUTHORIZED).json({ error: error.message });
+      res.status(HttpStatus.UNAUTHORIZED).json({ message: error.message });
     }
   }
 

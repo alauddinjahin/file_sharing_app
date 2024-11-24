@@ -5,7 +5,7 @@ const { auth_identifier } = require('../config/app');
 const userService = require('../services/userService');
 const tokenService = require('../services/tokenService');
 const authService = require('../services/authService');
-const { setCookieFromResponse } = require('../utils/jwtUtils');
+const { setCookie } = require('../utils/jwtUtils');
 const config = require('../config').app;
 
 
@@ -37,7 +37,7 @@ const authMiddleware = async(req, res, next) => {
 
         token = accessToken;
 
-        setCookieFromResponse(res, token);
+        setCookie(res, token);
     }else{
         decoded =  jwt.verify(token, config.secret);
     }
