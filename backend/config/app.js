@@ -2,6 +2,7 @@
 module.exports={
     name : process.env.APP_NAME || "ProjectName",
     clientUrl : process.env.CLIENT_URL || "http://localhost:3000",
+    apiUrl : process.env.BACKEND_API || "http://localhost:5000",
     version: "v1",
     port : process.env.APP_PORT || 800,
     secure : (process.env.NODE_ENV == 'production') || false,

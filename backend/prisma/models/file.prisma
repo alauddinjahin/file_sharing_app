@@ -5,6 +5,7 @@ model File {
   filename  String
   fileType  String    // 'image' or 'video'
   filePath  String
+  fileHash  String?   
   tags      FileTag[] 
   shares    FileShare[] 
   views     Int       @default(0) // Number of times viewed

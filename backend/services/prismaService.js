@@ -10,10 +10,10 @@ class PrismaService {
     this.#setupMiddleware();
     this.#setupShutdownHooks();
 
-    this._prisma.$on('query', (e) => {
-      console.log('Query:', e.query);
-      console.log('Duration:', e.duration, 'ms');
-    });
+    // this._prisma.$on('query', (e) => {
+    //   console.log('Query:', e.query);
+    //   console.log('Duration:', e.duration, 'ms');
+    // });
   }
 
   #setupMiddleware() {
